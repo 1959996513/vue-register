@@ -26,7 +26,7 @@
             </el-form-item>
 
             <el-form-item>
-              <el-button type="success">注册</el-button>
+              <el-button type="success" @click="submitForm('regForm')">注册</el-button>
               <el-button type="danger">重置</el-button>
             </el-form-item>
 
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+  import  request from '../utils/request'
     export default {
         name: "Register",
       data(){
@@ -57,7 +58,7 @@
 
         };
         let validatorPass2 = (rule,value,callback)=> {
-          if (value != this.regFrom.password) {
+          if (value != this.regForm.password) {
             callback(new Error('两次密码不一致'));
           } else {
             callback();
@@ -90,6 +91,35 @@
       methods:{
         handleSelect:function () {
 
+        },
+        //提交数据
+        submitForm:function (forName) {
+          this.$refs[forName].validate((valid)=>{
+            if(valid){
+              //  验证成功发送请求
+              request({
+                url:"/api/register",
+                method:'post',
+                data:this.regForm
+              }).then(({data})=>{
+                let success = data.success;
+                let message = data.message;
+                let userInfo = data.data;
+                if(success){
+                  this.$router.push('/login');
+                }else{
+                  //失败后提示
+                  // alert('用户名重复.请重新注册');
+                  this.$message.success(message);
+                }
+              }).catch(err=>{
+                console.log(err);
+              })
+            }else {
+              console.log('验证失败');
+              return false;
+            }
+          })
         }
       }
     }
