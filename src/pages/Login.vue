@@ -24,7 +24,7 @@
             </el-form-item>
 
             <el-form-item>
-              <el-button type="success">登录</el-button>
+              <el-button type="success" @click="submit('regForm')">登录</el-button>
               <el-button type="danger">重置</el-button>
             </el-form-item>
 
@@ -37,44 +37,68 @@
 </template>
 
 <script>
+  import request from '@/utils/request'
     export default {
-        name: "Login",
-      data(){
-        let checkpassword =(rule,value,callback)=>{
+      name: "Login",
+      data() {
+        let checkpassword = (rule, value, callback) => {
           let reg = /(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$/;
 
-          if(!reg.test(value))
-          {
+          if (!reg.test(value)) {
             callback(new Error('密码必须是6-16位数组字母的组合'));
-          }else{
+          } else {
             callback();
           }
 
 
         };
-        return{
+        return {
           activeIndex: '/login',
-          regForm:{
-             username:'',
-            password:''
+          regForm: {
+            username: '',
+            password: ''
           },
-          rules:{
-            username:[
-              { required: true, message: '请输入用户名', trigger: 'blur' },
-              { min: 6, max: 10, message: '长度在 6-10', trigger: 'blur' }
+          rules: {
+            username: [
+              {required: true, message: '请输入用户名', trigger: 'blur'},
+              {min: 6, max: 10, message: '长度在 6-10', trigger: 'blur'}
             ],
-           password:[
-              { required: true, message: '请输入用户名', trigger: 'blur' },
-             { validator: checkpassword, trigger: 'blur' }
+            password: [
+              {required: true, message: '请输入用户名', trigger: 'blur'},
+              {validator: checkpassword, trigger: 'blur'}
             ]
 
           }
         }
 
       },
-      methods:{
-        handleSelect:function () {
+      methods: {
+        handleSelect: function () {
 
+        },
+        submit: function (forName) {
+          this.$refs[forName].validate((valid) => {
+              if (valid) {
+                request({
+                  url: '/api/login',
+                  method: 'post',
+                  data: this.regForm
+                }).then(({data}) => {
+                  if(data.success){
+                    console.log(1111)
+                    this.$store.dispatch('UserLogin',data.token)
+                    this.$store.dispatch('UserName',data.username)
+                    this.$router.push('/')
+                  }else{
+                    this.$message.info(data.message)
+                  }
+
+                }).catch(err=>{
+                  console.log(err)
+                })
+              }
+            }
+          )
         }
       }
     }

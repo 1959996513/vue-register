@@ -10,7 +10,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 //引入全局main.scss
 import '@/style/main.scss'
 Vue.config.productionTip = true
-
+import store from '@/store'
 
 
 //使用element-ui作为们的前端框架
@@ -21,6 +21,8 @@ Vue.use(ElementUI,{
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
+
 })

@@ -18,7 +18,7 @@ const register = async ctx => {
 //  5.生成token,将成功的注册信息及token放回前端
   let username = ctx.request.body.username;
   let password = ctx.request.body.password;
-  console.log(username)
+  // console.log(username)
   let doc = await User.getUserByName(username);
   console.log(doc);
   if (doc) {
@@ -61,9 +61,49 @@ const register = async ctx => {
   }
 
 }
+const login=async ctx=>{
+  let username = ctx.request.body.username;
+  let password = ctx.request.body.password;
+  let doc = await User.getUserByName(username);
+  if(doc){
+    if(doc.password == sha1(password)){
+      let token = createToken(username);
+      doc.token = token;
+      await new  Promise((resolve,reject)=>{
+        doc.save((err,doc)=>{
+          if(err){
+            reject(err);
+          }else{
+            resolve()
+          }
+        })
+      })
+      ctx.status=200;
+      ctx.body = {
+        success:true,
+        message:'登陆成功',
+        token:token,
+        username:username
+      }
+    }else {
+      ctx.status = 200;
+      ctx.body={
+        success:false,
+        message:'密码错误....'
+      }
+    }
+  }else{
+    ctx.status=200;
+    ctx.body={
+      success:false,
+      message:'用户名不存在.....'
+    }
+  }
 
+}
 
 
 module.exports = {
-  register
+  register,
+  login
 }

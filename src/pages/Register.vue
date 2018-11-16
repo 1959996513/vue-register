@@ -1,14 +1,15 @@
 <template>
   <div>
-   <el-row>
-     <el-col :span="24">
+    <el-row>
+      <el-col :span="24">
 
-         <el-menu  router @select="handleSelect" :default-active="activeIndex" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-           <el-menu-item index="/login">登录</el-menu-item>
-           <el-menu-item index="/register">注册</el-menu-item>
-       </el-menu>
-     </el-col>
-   </el-row>
+        <el-menu router @select="handleSelect" :default-active="activeIndex" mode="horizontal"
+                 background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+          <el-menu-item index="/login">登录</el-menu-item>
+          <el-menu-item index="/register">注册</el-menu-item>
+        </el-menu>
+      </el-col>
+    </el-row>
     <el-main class="bg-dark">
       <el-row>
         <el-col :span="12" :offset="7">
@@ -41,88 +42,88 @@
 </template>
 
 <script>
-  import  request from '../utils/request'
-    export default {
-        name: "Register",
-      data(){
-        let validatorPass =(rule,value,callback)=>{
-          let reg = /(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$/;
+  import request from '../utils/request'
 
-          if(!reg.test(value))
-          {
-            callback(new Error('密码必须是6-16位数组字母的组合'));
-          }else{
-            callback();
-          }
+  export default {
+    name: "Register",
+    data() {
+      let validatorPass = (rule, value, callback) => {
+        let reg = /(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$/;
 
-
-        };
-        let validatorPass2 = (rule,value,callback)=> {
-          if (value != this.regForm.password) {
-            callback(new Error('两次密码不一致'));
-          } else {
-            callback();
-          }
+        if (!reg.test(value)) {
+          callback(new Error('密码必须是6-16位数组字母的组合'));
+        } else {
+          callback();
         }
-          return{
-            activeIndex: '/register',
-            regForm:{
-              username:'',
-              password:'',
-              checkpassword:''
-            },
-            rules:{
-              username:[
-                { required: true, message: '请输入用户名称', trigger: 'blur' },
-                { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
-              ],
-              password:[
-                {required:true,message:'请输入密码',trigger:'blur'},
-                {validator:validatorPass,trigger:'blur'}
 
-              ],
-              checkpassword:[
-                {required:true,message:'请输入密码',trigger:'blur'},
-                {validator:validatorPass2,trigger:'blur'}
-              ]
-            }
-          }
-      },
-      methods:{
-        handleSelect:function () {
 
-        },
-        //提交数据
-        submitForm:function (forName) {
-          this.$refs[forName].validate((valid)=>{
-            if(valid){
-              //  验证成功发送请求
-              request({
-                url:"/api/register",
-                method:'post',
-                data:this.regForm
-              }).then(({data})=>{
-                let success = data.success;
-                let message = data.message;
-                let userInfo = data.data;
-                if(success){
-                  this.$router.push('/login');
-                }else{
-                  //失败后提示
-                  // alert('用户名重复.请重新注册');
-                  this.$message.success(message);
-                }
-              }).catch(err=>{
-                console.log(err);
-              })
-            }else {
-              console.log('验证失败');
-              return false;
-            }
-          })
+      };
+      let validatorPass2 = (rule, value, callback) => {
+        if (value != this.regForm.password) {
+          callback(new Error('两次密码不一致'));
+        } else {
+          callback();
         }
       }
+      return {
+        activeIndex: '/register',
+        regForm: {
+          username: '',
+          password: '',
+          checkpassword: ''
+        },
+        rules: {
+          username: [
+            {required: true, message: '请输入用户名称', trigger: 'blur'},
+            {min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur'}
+          ],
+          password: [
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {validator: validatorPass, trigger: 'blur'}
+
+          ],
+          checkpassword: [
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {validator: validatorPass2, trigger: 'blur'}
+          ]
+        }
+      }
+    },
+    methods: {
+      handleSelect: function () {
+
+      },
+      //提交数据
+      submitForm: function (forName) {
+        this.$refs[forName].validate((valid) => {
+          if (valid) {
+            //  验证成功发送请求
+            request({
+              url: "/api/register",
+              method: 'post',
+              data: this.regForm
+            }).then(({data}) => {
+              let success = data.success;
+              let message = data.message;
+              let userInfo = data.data;
+              if (success) {
+                this.$router.push('/login');
+              } else {
+                //失败后提示
+                // alert('用户名重复.请重新注册');
+                this.$message.success(message);
+              }
+            }).catch(err => {
+              console.log(err);
+            })
+          } else {
+            console.log('验证失败');
+            return false;
+          }
+        })
+      }
     }
+  }
 </script>
 
 <style scoped>
