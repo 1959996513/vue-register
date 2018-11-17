@@ -32,14 +32,19 @@
         </el-col>
       </el-row>
     </el-main>
+
   </div>
 
 </template>
 
 <script>
+  import BeiNav from '@/components/BeiNav'
   import request from '@/utils/request'
     export default {
       name: "Login",
+      components:{
+        BeiNav
+      },
       data() {
         let checkpassword = (rule, value, callback) => {
           let reg = /(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$/;
